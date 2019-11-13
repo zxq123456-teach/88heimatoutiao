@@ -34,7 +34,64 @@
 
 <script>
 export default {
-
+  data () {
+    return {
+      // 要校验的整个表单数据
+      loginForm: {
+        mobile: '', // 手机号
+        code: '', // 验证码
+        checked: false // 是否勾选协议
+      },
+      // 校验规则对象
+      loginRules: {
+        // key(要校验的字段名):value(数组 => 多条或者1条或者没有规则)
+        mobile: [{ required: true, message: '请输入您的手机号' }, {
+          pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号'
+        }],
+        code: [{ required: true, message: '请输入您的验证码' }, {
+          pattern: /^\d{6}$/, message: '请输入六位数字'
+        }],
+        checked: [{ validator: function (rule, value, callback) {
+          // rule 代表当前的规则 没啥用
+          // value 代表当前的值 => 表单字段checked的值
+          // callback回调函数
+          if (value) {
+            // 如果是true 就是选中了 通过校验
+            callback() // 直接执行callBack 表示直接通过
+          } else {
+            // 没有选中 不通过校验
+            callback(new Error('您需要勾选用户协议'))
+          }
+        } }]
+      }
+    }
+  },
+  methods: {
+    login () {
+      //  this.$refs.formObj  获取 el-form 的对象实例
+      this.$refs.formObj.validate((isOK) => {
+        if (isOK) {
+          // 如果为true 继续下一步 调用接口 登录
+          this.$axios({
+            url: '/authorizations',
+            data: this.loginForm,
+            method: 'post'
+          }).then(result => {
+            // 存储到本地存储
+            window.localStorage.setItem('user-token', result.data.data.token)
+            // 跳转到主页
+            this.$router.push('/home')
+          }).catch(() => {
+            // 提示消息
+            this.$message({
+              type: 'warning',
+              message: '手机号或者验证码错误'
+            })
+          })
+        }
+      })
+    }
+  }
 }
 </script>
 
