@@ -68,21 +68,17 @@ export default {
   },
   methods: {
     login () {
-      //  this.$refs.formObj  获取 el-form 的对象实例
       this.$refs.formObj.validate((isOK) => {
         if (isOK) {
-          // 如果为true 继续下一步 调用接口 登录
           this.$axios({
             url: '/authorizations',
             data: this.loginForm,
             method: 'post'
           }).then(result => {
-            // 存储到本地存储
             window.localStorage.setItem('user-token', result.data.data.token)
-            // 跳转到主页
+
             this.$router.push('/home')
           }).catch(() => {
-            // 提示消息
             this.$message({
               type: 'warning',
               message: '手机号或者验证码错误'
