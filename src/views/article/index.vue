@@ -5,7 +5,7 @@
             <div slot='header' class='clearfix'>
                 <span>全部图文</span>
             </div>
-            <el-form ref='form' :model='form' label-width='80px'>
+            <el-form ref='form' label-width='80px'>
                 <el-form-item label='文章状态'>
                     <el-radio-group>
                         <el-radio label='全部'></el-radio>
@@ -16,7 +16,7 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label='频道列表'>
-                    <el-select placeholder='请选择活动区域'>
+                    <el-select placeholder='请选择活动区域' v-model="filterForm.channel_id">
                         <el-option label='区域一' value='shanghai'></el-option>
                         <el-option label='区域二' value='beijing'></el-option>
                     </el-select>
@@ -48,23 +48,35 @@
                 prop='date'
                 label='封面'
                 width='180'>
+                <template slot-scope='scope'>
+                    <img width='50' :src='scope.row.cover.images[0]'>
+                </template>
                 </el-table-column>
                 <el-table-column
-                prop='name'
+                prop='title'
                 label='标题'
                 width='180'>
                 </el-table-column>
                 <el-table-column
-                prop='address'
+                prop='status'
                 label='状态'>
+                <template slot-scope='scope'>
+                    <el-tag
+                    :type='articleStatus[scope.row.status].type'
+                    >{{ articleStatus[scope.row.status].label }}</el-tag>
+                </template>
                 </el-table-column>
                 <el-table-column
-                prop='address'
+                prop='pubdate'
                 label='发布日期'>
                 </el-table-column>
                 <el-table-column
                 prop='address'
                 label='操作'>
+                <template>
+                    <el-button type='danger' size='mini'>编辑</el-button>
+                    <el-button type='primary' size='mini'>删除</el-button>
+                </template>
                 </el-table-column>
             </el-table>
         </el-card>
@@ -73,7 +85,7 @@
 
 <script>
 export default {
-  name: '',
+  name: 'article-list',
   data () {
     return {
       // 过滤数据的表单
@@ -84,32 +96,60 @@ export default {
         end_pubdate: ''
       },
       rangeDate: '',
-      tableDate: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      },
-      {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      },
-      {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      },
-      {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }
+      articles: [],
+      articleStatus: [
+        {
+          type: '',
+          label: '草稿'
+        },
+        {
+          type: 'warning',
+          label: '待审核'
+        },
+        {
+          type: 'success',
+          label: '审核通过'
+        },
+        {
+          type: 'danger',
+          label: '审核失败'
+        },
+        {
+          type: 'info',
+          label: '已删除'
+        }
       ]
+    }
+  },
+  created () {
+    this.loadArticles()
+  },
+  methods: {
+    loadArticles () {
+      // 把token放到请求头中
+      const token = window.localStorage.getItem('user-token')
+
+      this.$axios({
+        method: 'GET',
+        url: '/articles',
+        headers: {
+          // 添加请求头
+          Authorization: `Bearer ${token}`
+        }
+      }).then(res => {
+        this.articles = res.data.data.results
+      }).catch(err => {
+        console.log(err, '获取数据失败')
+      })
     }
   }
 }
 </script>
 
-<style>
-
+<style lang="less" scoped>
+    .article{
+        .box-card{
+            margin-bottom: 20px;
+        }
+    }
 </style>
