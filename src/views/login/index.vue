@@ -77,7 +77,7 @@ export default {
           }).then(result => {
             window.localStorage.setItem('user-token', result.data.data.token)
 
-            this.$router.push('/home')
+            this.$router.push('/')
           }).catch(() => {
             this.$message({
               type: 'warning',
