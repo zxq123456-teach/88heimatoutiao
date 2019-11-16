@@ -210,6 +210,20 @@ export default {
       }).catch(err => {
         console.log(err, '获取数据失败')
       })
+    },
+    onDelete (articleId) {
+      this.$axios({
+        method: 'DELETE',
+        url: `/articles/${articleId}`,
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem('user-token')}`
+        }
+      }).then(res => {
+        // 删除成功 重新加载当前页码文章列表
+        this.loadArticles(this.page)
+      }).catch(err => {
+        console.log(err, '删除失败')
+      })
     }
   }
 }
