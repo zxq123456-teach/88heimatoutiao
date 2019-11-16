@@ -43,7 +43,8 @@
             </div>
             <el-table
             :data='articles'
-            style='width:100%'>
+            style='width:100%'
+            v-loading='loading'>
                 <el-table-column
                 prop='date'
                 label='封面'
@@ -86,7 +87,8 @@
         background
         layout='prev,pager,next'
         :total='totalCount'
-        @current-change='onPageChange'>
+        @current-change='onPageChange'
+        :disabled='loading'>
         </el-pagination>
     </div>
 </template>
@@ -128,7 +130,9 @@ export default {
         }
       ],
       // 总记录数
-      totalCount: 0
+      totalCount: 0,
+      // 表格的loading状态
+      loading: true
     }
   },
   created () {
@@ -137,6 +141,8 @@ export default {
   },
   methods: {
     loadArticles (page = 1) {
+      // 加载loading
+      this.loading = true
       // 把token放到请求头中
       const token = window.localStorage.getItem('user-token')
 
@@ -153,12 +159,18 @@ export default {
           per_page: 10
         }
       }).then(res => {
+        // 成功执行这里
         // 更新文章列表数组
         this.articles = res.data.data.results
         // 更新总记录数
         this.totalCount = res.data.data.total_count
       }).catch(err => {
+        // 失败执行这里
         console.log(err, '获取数据失败')
+      }).finally(() => {
+        // 无论成功失败都要执行这里
+        // 停止loading
+        this.loading = false
       })
     },
     onPageChange (page) {
