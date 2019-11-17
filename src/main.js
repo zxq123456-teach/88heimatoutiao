@@ -22,8 +22,54 @@ axios.defaults.transformResponse = [function (data, headers) {
     return {}
   }
 }]
+
+// axios请求拦截器
+axios.interceptors.request.use(function (config) {
+  // 在请求拦截器函数中的 config 是本次请求相关的配置对象
+  // config 就是最后要发给后端的那个配置对象
+  // 我们可以在拦截器中对 config 进行统一配置定制
+  console.log('请求拦截器', config)
+
+  const token = window.localStorage.getItem('user-token')
+
+  // 统一添加 token
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+
+  // return config 是通行的规则
+  return config
+}, function (error) {
+  // Do something with request error
+  return Promise.reject(error)
+})
+
+// axios响应拦截器
+axios.interceptors.response.use(function (response) {
+  // Any status code that lie within the range of 2xx cause this function to trigger
+  // Do something with response data
+  console.log('响应拦截器')
+  return response
+}, function (error) {
+  // Any status codes that falls outside the range of 2xx cause this function to trigger
+  // Do something with response error
+  return Promise.reject(error)
+})
+
+// 将axios共享给所有的实例使用
 Vue.prototype.$axios = axios
-Vue.use(Element)
+// 注册整个的所有的elementUI组件
+// Vue.use 调用了elementUI里面的一个方法 install => 调用时 传入了 Vue对象
+// 在引入 Element 时，可以传入一个全局配置对象。
+// 该对象目前支持 size 与 zIndex 字段。
+// size 用于改变组件的默认尺寸，
+// zIndex 设置弹框的初始 z-index（默认值：2000）
+
+Vue.use(Element, {
+  // 项目中所有拥有 size 属性的组件的默认尺寸均为 'small'
+  size: 'small'
+})
+
 Vue.config.productionTip = false
 
 new Vue({

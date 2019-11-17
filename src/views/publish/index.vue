@@ -1,5 +1,5 @@
 <template>
-  <div class='publish'>发布文章</div>
+  <div class=’publish>发布文章</div>
 </template>
 
 <script>
