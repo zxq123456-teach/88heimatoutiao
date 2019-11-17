@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+import VueRouter from 'vue-router' // 路由  link，view
 import Layout from '../views/layout' // 简写路径
 import Login from '../views/login' // 简写路径
 import Home from '@/views/home'
