@@ -41,7 +41,16 @@
             </el-table-column>
         </el-table>
       </el-card>
+
+      <el-pagination
+      background
+      layout='prev,pager,next'
+      :total='totalCount'
+      @current-change='onPageChange'
+      :disabled='loading'>
+      </el-pagination>
   </div>
+
 </template>
 
 <script>
@@ -51,7 +60,9 @@ export default {
   props: {},
   data () {
     return {
-      articles: [] // 文章列表（文章的评论数据字段）
+      articles: [], // 文章列表（文章的评论数据字段）
+      totalCount: 0,
+      loading: false
     }
   },
   computed: {},
@@ -62,15 +73,17 @@ export default {
     this.loadArticles()
   },
   methods: {
-    loadArticles () {
+    loadArticles (page) {
       this.$axios({
         method: 'GET',
         url: '/articles',
         params: {
+          page,
           response_type: 'comment'
         }
       }).then(res => {
         this.articles = res.data.data.results
+        this.totalCount = res.data.data.total_count
       }).catch(err => {
         console.log(err, '获取数据失败')
       })
@@ -95,6 +108,9 @@ export default {
         console.log(err)
         this.$message.error('操作失败')
       })
+    },
+    onPageChange (page) {
+      this.loadArticles(page)
     }
   }
 }
