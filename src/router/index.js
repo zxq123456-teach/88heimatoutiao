@@ -5,6 +5,7 @@ import Login from '../views/login' // 简写路径
 import Home from '@/views/home'
 import Article from '@/views/article'
 import Publish from '@/views/publish'
+import Comment from '@/views/comment'
 import NProgress from 'nprogress'
 Vue.use(VueRouter)
 
@@ -33,6 +34,10 @@ const routes = [
       {
         path: '/publish/:articleId',
         component: Publish
+      },
+      {
+        path: '/comment',
+        component: Comment
       }
     ]
   },
