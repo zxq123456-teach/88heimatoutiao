@@ -19,7 +19,7 @@
                   </el-radio-group>
               </el-form-item>
               <el-form-item label='频道列表'>
-                  <el-select placeholder='请选择频道' v-model="filterForm.channel_id">
+                  <!-- <el-select placeholder='请选择频道' v-model="filterForm.channel_id">
                     <el-option label='所有频道' :value='null'></el-option>
                       <el-option
                       :label='channel.name'
@@ -27,7 +27,8 @@
                       v-for="channel in channels"
                       :key='channel.id'>
                       </el-option>
-                  </el-select>
+                  </el-select> -->
+                  <channel-select v-model="filterForm.channel_id"></channel-select>
               </el-form-item>
               <el-form-item label='时间选择'>
                   <el-date-picker
@@ -85,8 +86,8 @@
               prop='address'
               label='操作'>
               <template slot-scope='scope'>
-                  <el-button type='danger' size='mini'>编辑</el-button>
-                  <el-button type='primary' size='mini' @click='onDelete(scope.row.id)'>删除</el-button>
+                  <el-button type='primary' size='mini' @click="$router.push('/publish/'+scope.row.id)">编辑</el-button>
+                  <el-button type='danger' size='mini' @click='onDelete(scope.row.id)'>删除</el-button>
               </template>
               </el-table-column>
           </el-table>
@@ -104,8 +105,13 @@
 </template>
 
 <script>
+import ChannelSelect from '@/components/channel-select'
+
 export default {
-  name: 'article-list',
+  name: 'ArticleIndex',
+  components: {
+    ChannelSelect
+  },
   data () {
     return {
       // 过滤数据的表单
@@ -155,22 +161,22 @@ export default {
     this.loadArticles(1)
 
     // 加载频道列表
-    this.loadChannels()
+    // this.loadChannels()
   },
   methods: {
     loadArticles (page = 1) {
       // 加载loading
       this.loading = true
       // 把token放到请求头中
-      const token = window.localStorage.getItem('user-token')
+      // const token = window.localStorage.getItem('user-token')
 
       this.$axios({
         method: 'GET',
         url: '/articles',
-        headers: {
-          // 添加请求头
-          Authorization: `Bearer ${token}`
-        },
+        // headers: {
+        //   // 添加请求头
+        //   Authorization: `Bearer ${token}`
+        // },
         // Query 参数使用 params 传递
         params: {
           page,
@@ -201,23 +207,23 @@ export default {
       // 请求加载指定页码的文章列表
       this.loadArticles(page)
     },
-    loadChannels () {
-      this.$axios({
-        metho: 'GET',
-        url: '/channels'
-      }).then(res => {
-        this.channels = res.data.data.channels
-      }).catch(err => {
-        console.log(err, '获取数据失败')
-      })
-    },
+    // loadChannels () {
+    //   this.$axios({
+    //     metho: 'GET',
+    //     url: '/channels'
+    //   }).then(res => {
+    //     this.channels = res.data.data.channels
+    //   }).catch(err => {
+    //     console.log(err, '获取数据失败')
+    //   })
+    // },
     onDelete (articleId) {
       this.$axios({
         method: 'DELETE',
-        url: `/articles/${articleId}`,
-        headers: {
-          Authorization: `Bearer ${window.localStorage.getItem('user-token')}`
-        }
+        url: `/articles/${articleId}`
+        // headers: {
+        //   Authorization: `Bearer ${window.localStorage.getItem('user-token')}`
+        // }
       }).then(res => {
         // 删除成功 重新加载当前页码文章列表
         this.loadArticles(this.page)
