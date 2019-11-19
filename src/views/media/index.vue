@@ -44,7 +44,7 @@
 
               <!-- class 本来就是绑定数据字符串 -->
               <!-- <i :class="item.is_collected ? 'el-icon-star-on': 'el-icon-star-off'"></i> -->
-              <i class="el-icon-delete-solid"></i>
+              <i class="el-icon-delete-solid" @click='onDelete(item)'></i>
             </div>
           </el-card>
         </el-col>
@@ -109,6 +109,36 @@ export default {
       }).catch(err => {
         console.log(err)
         this.$message.error('操作失败')
+      })
+    },
+    onDelete (item) {
+      this.$confirm('确定删除吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 确定执行
+        this.$axios({
+          method: 'DELETE',
+          url: `/user/images/${item.id}`
+        }).then(res => {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+
+          //   更新列表
+          this.loadImages(this.type !== '全部')
+        }).catch(err => {
+          console.log(err)
+          this.$message.error('删除失败')
+        })
+      }).catch(() => {
+        //   取消执行
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     }
   }
