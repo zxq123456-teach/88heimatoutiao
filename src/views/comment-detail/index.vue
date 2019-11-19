@@ -66,7 +66,12 @@
 export default {
   name: 'CommentDetail',
   components: {},
-  props: {},
+  props: {
+    articleId: {
+      type: String,
+      required: true
+    }
+  },
   data () {
     return {
       comments: []
@@ -94,6 +99,19 @@ export default {
       }).catch(err => {
         console.log(err)
         this.$message.error('获取数据失败')
+      })
+    },
+    onTop (comment) {
+      this.$axios({
+        method: 'PUT',
+        url: `/comments/${comment.com_id}/sticky`,
+        data: {
+          sticky: comment.is_top
+        }
+      }).then(res => {
+        this.$message('操作成功')
+      }).catch(err => {
+        this.$message.error(err, '操作失败')
       })
     }
   }
