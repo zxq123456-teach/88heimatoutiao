@@ -3,22 +3,25 @@
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>素材管理</span>
-        <el-button style="float: right; padding: 3px 0" type="text"
-          >上传图片</el-button
-        >
+        <el-upload
+          class="upload-demo"
+          style="float: right;"
+          action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
+          :headers="uploadHeaders"
+          name="image"
+          :on-success="onUploadSuccess"
+          :show-file-list="false">
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
       </div>
-      <div>
+
+      <div style="margin-bottom: 20px;">
         <el-radio-group v-model="type" @change="onFind">
           <el-radio-button label="全部">全部</el-radio-button>
           <el-radio-button label="收藏">收藏</el-radio-button>
         </el-radio-group>
       </div>
-      <!--
-        el-row 行
-          gutter 间隔距离
-        el-col 列
-          span 用来指定列数
-       -->
+
       <el-row :gutter="20">
         <el-col
           :xs="24"
@@ -33,6 +36,7 @@
               :src="item.url"
               class="image"
               height="200"
+              width="185"
             />
             <div style="padding: 14px;" class="action">
               <!-- class 还支持对象语法， -->
@@ -54,6 +58,8 @@
 </template>
 
 <script>
+const token = window.localStorage.getItem('user-token')
+
 export default {
   name: 'MediaIndex',
   components: {},
@@ -61,7 +67,12 @@ export default {
   data () {
     return {
       images: [],
-      type: '全部'
+      type: '全部',
+
+      // 给上传组件使用请求头
+      uploadHeaders: {
+        Authorization: `Bearer ${token}`
+      }
     }
   },
   computed: {},
@@ -140,6 +151,10 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    onUploadSuccess () {
+      // 刷新图片列表
+      this.loadImages(this.type !== '全部')
     }
   }
 }

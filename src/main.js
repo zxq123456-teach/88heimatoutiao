@@ -6,6 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './styles/index.less'
 import axios from 'axios'
 import JSONbig from 'json-bigint'
+// import moment from 'moment'
 import 'nprogress/nprogress.css'
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'
 
@@ -69,6 +70,9 @@ Vue.use(Element, {
   // 项目中所有拥有 size 属性的组件的默认尺寸均为 'small'
   size: 'small'
 })
+// Vue.filter('dateFormat', (value, format = 'YYYY-MM-DD') => {
+//   return moment(value).format(format)
+// })
 
 Vue.config.productionTip = false
 
