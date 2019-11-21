@@ -5,9 +5,9 @@
           <span>江苏传智播客教育科技股份有限公司</span>
       </el-col>
       <el-col :span='3' class='right'>
-          <img src="../assets/img/avatar.jpg" alt="">
+          <img width="50" :src='user.photo' alt="">
           <el-dropdown trigger='click'>
-              <span style="cursor:pointer">猪猪女孩</span>
+              <span>{{user.name}}</span>
               <el-dropdown-menu slot='dropdown'>
                   <el-dropdown-item>账户信息</el-dropdown-item>
                   <el-dropdown-item>git地址</el-dropdown-item>
@@ -19,8 +19,41 @@
 </template>
 
 <script>
+import eventBus from '@/utils/event-bus'
+
 export default {
+  data () {
+    return {
+      user: {
+        name: '', // 用户昵称
+        photo: '' // 用户头像
+      }
+    }
+  },
+
+  created () {
+    this.loadUser()
+
+    // 在初始化中监听自定义事件
+    eventBus.$on('update-user', user => {
+      console.log('header 中的订阅执行了')
+      // this.user = user
+      this.user.name = user.name
+      this.user.photo = user.photo
+    })
+  },
   methods: {
+    loadUser () {
+      this.$axios({
+        method: 'GET',
+        url: '/user/profile'
+      }).then(res => {
+        this.user = res.data.data
+      }).catch(err => {
+        console.log(err)
+        this.$message.error('获取数据失败')
+      })
+    },
     onlogout () {
       this.$confirm('确认退出吗？', '退出提示', {
         confirmButtonText: '确定',
