@@ -34,7 +34,14 @@
             <el-radio label="collect">收藏</el-radio>
           </el-radio-group>
           <el-row :gutter="20">
-            <el-col :span="6" v-for="item in images" :key="item.id">
+            <el-col
+            :class="{
+              'img-item':index === activeIndex
+            }"
+            :span="6"
+            v-for="(item,index) in images"
+            :key="item.id"
+            @click.native='activeIndex = index'>
               <img height="100" :src="item.url">
             </el-col>
           </el-row>
@@ -60,7 +67,9 @@ export default {
       centerDialogVisible: false, // 对话框的显示状态
       activeName: 'first', // 激活的标签页
       activeImage: 'all', // 激活的图片筛选类型
-      images: []
+      images: [],
+      activeIndex: null,
+      previewImage: ''
     }
   },
   computed: {},
