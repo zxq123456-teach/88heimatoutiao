@@ -37,8 +37,10 @@
           </el-radio-group>
           <template v-if="article.cover.type > 0">
             <el-row :gutter='20'>
-              <el-col :span="4" v-for="item in article.cover.type" :key='item'>
-                <UploadImage></UploadImage>
+              <el-col :span="4" v-for="(item,index) in article.cover.type" :key='item'>
+                <UploadImage
+                v-model="article.cover.images[index]"
+                ></UploadImage>
               </el-col>
             </el-row>
           </template>

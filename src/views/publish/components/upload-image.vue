@@ -61,15 +61,20 @@
 export default {
   name: 'UploadImage',
   components: {},
-  props: {},
+  props: {
+    // 选择预览的图片地址
+    value: {
+      type: String
+    }
+  },
   data () {
     return {
       centerDialogVisible: false, // 对话框的显示状态
       activeName: 'first', // 激活的标签页
       activeImage: 'all', // 激活的图片筛选类型
       images: [],
-      activeIndex: null,
-      previewImage: ''
+      activeIndex: null, // 激活的图片的索引
+      previewImage: '' // 预览的图片地址
     }
   },
   computed: {},
@@ -101,6 +106,19 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+
+    // 当对话框点击确定的时候
+    onConfirm () {
+      const image = this.images[this.activeIndex]
+      if (image) {
+        // 将选中的图片路径赋值给 previewImage
+        // this。previewImage = image.url
+        // 将所选图片的路径同步给父组件绑定的数据
+        this.$emit('input', image.url)
+      }
+      // 关闭对话框
+      this.centerDialogVisible = false
     }
   }
 }
